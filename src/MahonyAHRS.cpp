@@ -239,6 +239,7 @@ float Mahony::invSqrt(float x) {
 	i = 0x5f3759df - (i>>1);
 	y = *(float*)&i;
 	y = y * (1.5f - (halfx * y * y));
+	y = y * (1.5f - (halfx * y * y));
 	return y;
 }
 
