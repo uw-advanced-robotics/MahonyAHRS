@@ -27,7 +27,7 @@
 //-------------------------------------------------------------------------------------------
 // Definitions
 
-#define sampleFreq	512.0f		// sample frequency in Hz
+#define DEFAULT_SAMPLE_FREQ	512.0f	// sample frequency in Hz
 #define twoKpDef	(2.0f * 0.5f)	// 2 * proportional gain
 #define twoKiDef	(2.0f * 0.0f)	// 2 * integral gain
 
@@ -49,6 +49,7 @@ Mahony::Mahony()
 	integralFBx = 0.0f;
 	integralFBy = 0.0f;
 	integralFBz = 0.0f;
+	invSampleFreq = 1.0f / DEFAULT_SAMPLE_FREQ;
 }
 
 void Mahony::update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz)
@@ -118,9 +119,9 @@ void Mahony::update(float gx, float gy, float gz, float ax, float ay, float az, 
 		// Compute and apply integral feedback if enabled
 		if(twoKi > 0.0f) {
 			// integral error scaled by Ki
-			integralFBx += twoKi * halfex * (1.0f / sampleFreq);
-			integralFBy += twoKi * halfey * (1.0f / sampleFreq);
-			integralFBz += twoKi * halfez * (1.0f / sampleFreq);
+			integralFBx += twoKi * halfex * invSampleFreq;
+			integralFBy += twoKi * halfey * invSampleFreq;
+			integralFBz += twoKi * halfez * invSampleFreq;
 			gx += integralFBx;	// apply integral feedback
 			gy += integralFBy;
 			gz += integralFBz;
@@ -137,9 +138,9 @@ void Mahony::update(float gx, float gy, float gz, float ax, float ay, float az, 
 	}
 
 	// Integrate rate of change of quaternion
-	gx *= (0.5f * (1.0f / sampleFreq));		// pre-multiply common factors
-	gy *= (0.5f * (1.0f / sampleFreq));
-	gz *= (0.5f * (1.0f / sampleFreq));
+	gx *= (0.5f * invSampleFreq);		// pre-multiply common factors
+	gy *= (0.5f * invSampleFreq);
+	gz *= (0.5f * invSampleFreq);
 	qa = q0;
 	qb = q1;
 	qc = q2;
@@ -190,9 +191,9 @@ void Mahony::updateIMU(float gx, float gy, float gz, float ax, float ay, float a
 		// Compute and apply integral feedback if enabled
 		if(twoKi > 0.0f) {
 			// integral error scaled by Ki
-			integralFBx += twoKi * halfex * (1.0f / sampleFreq);
-			integralFBy += twoKi * halfey * (1.0f / sampleFreq);
-			integralFBz += twoKi * halfez * (1.0f / sampleFreq);
+			integralFBx += twoKi * halfex * invSampleFreq;
+			integralFBy += twoKi * halfey * invSampleFreq;
+			integralFBz += twoKi * halfez * invSampleFreq;
 			gx += integralFBx;	// apply integral feedback
 			gy += integralFBy;
 			gz += integralFBz;
@@ -209,9 +210,9 @@ void Mahony::updateIMU(float gx, float gy, float gz, float ax, float ay, float a
 	}
 
 	// Integrate rate of change of quaternion
-	gx *= (0.5f * (1.0f / sampleFreq));		// pre-multiply common factors
-	gy *= (0.5f * (1.0f / sampleFreq));
-	gz *= (0.5f * (1.0f / sampleFreq));
+	gx *= (0.5f * invSampleFreq);		// pre-multiply common factors
+	gy *= (0.5f * invSampleFreq);
+	gz *= (0.5f * invSampleFreq);
 	qa = q0;
 	qb = q1;
 	qc = q2;

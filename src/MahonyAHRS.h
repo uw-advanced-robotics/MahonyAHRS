@@ -23,6 +23,7 @@ private:
 	float twoKi;		// 2 * integral gain (Ki)
 	float q0, q1, q2, q3;	// quaternion of sensor frame relative to auxiliary frame
 	float integralFBx, integralFBy, integralFBz;  // integral error terms scaled by Ki
+	float invSampleFreq;
 	static float invSqrt(float x);
 
 //---------------------------------------------------------------------------------------------------
@@ -30,6 +31,7 @@ private:
 
 public:
 	Mahony();
+	void begin(float sampleFrequency) { invSampleFreq = 1.0f / sampleFrequency; }
 	void update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz);
 	void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
 	float getPitch(){return atan2f(2.0f * q2 * q3 - 2.0f * q0 * q1, 2.0f * q0 * q0 + 2.0f * q3 * q3 - 1.0f);};

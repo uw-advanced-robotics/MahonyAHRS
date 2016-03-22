@@ -17,6 +17,7 @@ Mahony filter;
 void setup() {
   Serial.begin(9600);
   imu.begin();
+  filter.begin(100); // filter to expect 100 measurements per second
 }
 
 void loop() {
@@ -29,8 +30,9 @@ void loop() {
     // Read the motion sensors
     imu.readMotionSensor(ax, ay, az, gx, gy, gz, mx, my, mz);
 
-    // Scale the gyroscope to the range Mahony expects
-    float gyroScale = 0.097656f;
+    // NXPMotionSense gyroscope uses degrees/second
+    // Mahony expects gyroscope in radians/second
+    float gyroScale = 3.14159f / 180.0f;
     gx = gx * gyroScale;
     gy = gy * gyroScale;
     gz = gz * gyroScale;
