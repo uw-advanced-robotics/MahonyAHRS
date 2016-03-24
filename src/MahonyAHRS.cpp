@@ -69,6 +69,11 @@ void Mahony::update(float gx, float gy, float gz, float ax, float ay, float az, 
 		return;
 	}
 
+	// Convert gyroscope degrees/sec to radians/sec
+	gx *= 0.0174533f;
+	gy *= 0.0174533f;
+	gz *= 0.0174533f;
+
 	// Compute feedback only if accelerometer measurement valid
 	// (avoids NaN in accelerometer normalisation)
 	if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
@@ -168,6 +173,11 @@ void Mahony::updateIMU(float gx, float gy, float gz, float ax, float ay, float a
 	float halfvx, halfvy, halfvz;
 	float halfex, halfey, halfez;
 	float qa, qb, qc;
+
+	// Convert gyroscope degrees/sec to radians/sec
+	gx *= 0.0174533f;
+	gy *= 0.0174533f;
+	gz *= 0.0174533f;
 
 	// Compute feedback only if accelerometer measurement valid
 	// (avoids NaN in accelerometer normalisation)
