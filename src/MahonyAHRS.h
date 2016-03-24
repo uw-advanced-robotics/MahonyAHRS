@@ -24,7 +24,10 @@ private:
 	float q0, q1, q2, q3;	// quaternion of sensor frame relative to auxiliary frame
 	float integralFBx, integralFBy, integralFBz;  // integral error terms scaled by Ki
 	float invSampleFreq;
+	float roll, pitch, yaw;
+	char anglesComputed;
 	static float invSqrt(float x);
+	void computeAngles();
 
 //-------------------------------------------------------------------------------------------
 // Function declarations
@@ -34,21 +37,29 @@ public:
 	void begin(float sampleFrequency) { invSampleFreq = 1.0f / sampleFrequency; }
 	void update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz);
 	void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
-	float getPitch() {
-		float x = 2.0f * (q1*q3 - q0*q2);
-		float y = 2.0f * (q0*q1 + q2*q3);
-		float z = q0*q0 - q1*q1 - q2*q2 + q3*q3;
-		return atan2f(x, sqrtf(y*y + z*z));
-	}
 	float getRoll() {
-		float x = 2.0f * (q1*q3 - q0*q2);
-		float y = 2.0f * (q0*q1 + q2*q3);
-		float z = q0*q0 - q1*q1 - q2*q2 + q3*q3;
-		return atan2f(y, sqrtf(x*x + z*z));
+		if (!anglesComputed) computeAngles();
+		return roll * 57.29578f;
+	}
+	float getPitch() {
+		if (!anglesComputed) computeAngles();
+		return pitch * 57.29578f;
 	}
 	float getYaw() {
-		return atan2f(2.0f*q1*q2 - 2.0f*q0*q3,
-			2.0f*q0*q0 + 2.0f*q1*q1 - 1.0f);
+		if (!anglesComputed) computeAngles();
+		return yaw * 57.29578f + 180.0f;
+	}
+	float getRollRadians() {
+		if (!anglesComputed) computeAngles();
+		return roll;
+	}
+	float getPitchRadians() {
+		if (!anglesComputed) computeAngles();
+		return pitch;
+	}
+	float getYawRadians() {
+		if (!anglesComputed) computeAngles();
+		return yaw;
 	}
 };
 
